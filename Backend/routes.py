@@ -3,23 +3,30 @@ from flask import request, jsonify
 from models import friend
 
 #Get all friends
-@app.route("/api/friends", method=['GET'])
+@app.route("/api/friends", methods=['GET'])
 def get_friends():
     friends = friend.query.all()
     result = [friend.to_json() for friend in friends]
     return jsonify(result), 200          #BY DEFAULT, IT IS 200    
 
 #create A Friend
-@app.route("/api/friends", method=['POST'])
+@app.route("/api/friends", methods=['POST'])
 def create_friend():
     try:
-        data = request.jason
+        data = request.get_json()
+
+                                    #HOW TO CHECK AND HANDLE REQUIRED FIELDS
+        required_fields = ["name", "role", "description", "gender"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error":f"missing required field: {field}"}), 400
+
+
 
         name = data.get("name")
         role = data.get("role")
         description = data.get("description")                  #16618968911760
         gender = data.get("gender")
-        name = data.get("name")
        
 
         #fetch Avater image base on gender 
@@ -35,7 +42,7 @@ def create_friend():
         db.session.add(new_friend)
         db.session.commit()
         
-        return jsonify({"msg: Friend created successfully!"}), 201   #jsonify(new_friend.to_jason)
+        return jsonify({"msg": "Friend created successfully!"}), 201   #jsonify(new_friend.to_jason)
     
     except Exception as e:
         db.session.rollback()

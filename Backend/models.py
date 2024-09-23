@@ -9,7 +9,7 @@ class friend(db.Model):
     img_url = db.Column(db.String(200), nullable=True)
 
 
-    def to_jason(self):
+    def to_json(self):
         return {
             "id":self.id,
             "name":self.name,
